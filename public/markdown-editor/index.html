@@ -1,0 +1,41 @@
+<html>
+<head>
+    <title>Notebook</title>
+    <!-- Icons & Stylesheets -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<!-- Notebook app -->
+<div id="notebook">
+    <!-- sidebar -->
+    <aside class="side-bar">
+        <div class="toolbar">
+            <button @click="addNote" :title="addButtonTitle"><i class="material-icons">add</i> Add note</button>
+        </div>
+        <div class="notes">
+            <div class="note" :class="{selected: note === selectedNote}" v-for="note in notes" :key="note.id"
+                 @click="selectNote(note)">{{note.title}}
+            </div>
+        </div>
+    </aside>
+
+    <template v-if="selectedNote">
+        <!-- main panel -->
+        <section class="main">
+            <textarea v-model="selectedNote.content"></textarea>
+        </section>
+
+        <!-- preview -->
+        <aside class="preview" v-html="notePreview">
+        </aside>
+    </template>
+</div>
+
+<!-- Include the library in the page -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/marked"></script>
+<!-- Some JavaScript -->
+<script src="script.js"></script>
+</body>
+</html>
