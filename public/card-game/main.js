@@ -6,12 +6,22 @@ new Vue({
     template: `
         <div id="#app" @click="">
             <top-bar :turn="turn" :current-player-index="currentPlayerIndex" :players="players"/>
+            <div class="world">
+                <castle v-for="(player, index) in players" :player="player" :index="index" />
+                <div class="land"></div>
+            </div>
             <transition name="hand">
                 <hand v-if="!activeOverlay" :cards="testHand" @card-play="testPlayCard"/>
             </transition>
-            <overlay>
-                Hello World!
+            <transition name="fade">
+                <div class="overlay_background" v-if="activeOverlay"></div>
+            </transition>
+            <transition name="zoom">
+            <overlay v-if="activeOverlay" :key="activeOverlay">
+                <component :is="'overlay-content-' + activeOverlay" :player="currentPlayer"
+                           :opponent="currentOpponent" :players="players"/>
             </overlay>
+            </transition>
         </div>
     `,
 
@@ -60,3 +70,9 @@ new Vue({
 window.addEventListener('resize', () => {
     state.worldRatio = getWorldRatio()
 })
+
+requestAnimationFrame(animate)
+function animate(time) {
+    requestAnimationFrame(animate)
+    TWEEN.update(time)
+}
