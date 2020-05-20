@@ -15,6 +15,30 @@ new Vue({
         },
         selectedNote() {
             return this.notes.find(note => note.id === this.selectedId)
+        },
+        sortedNotes() {
+            return this.notes.slice()
+                .sort((a, b) => a.created - b.created)
+                .sort((a, b) => (a.favorite === b.favorite) ? 0 : (a.favorite) ? -1 : 1)
+        },
+        linesCount() {
+            if (this.selectedNote) {
+                return this.selectedNote.content.split(/\r\n|\r|\n/).length
+            }
+        },
+        wordsCount() {
+            if (this.selectedNote) {
+                let s = this.selectedNote.content
+                s = s.replace(/\n/g, ' ')
+                s = s.replace(/(^\s*)|(\s*$)/gi, '')
+                s = s.replace(/\s\s+/gi, ' ')
+                return s.split(' ').length
+            }
+        },
+        charactersCount() {
+            if (this.selectedNote) {
+                return this.selectedNote.content.split('').length
+            }
         }
     },
     methods: {
@@ -35,6 +59,17 @@ new Vue({
         saveNotes() {
             localStorage.setItem('notes', JSON.stringify(this.notes))
             console.log('Notes saved!', new Date())
+        },
+        removeNote() {
+            if (this.selectedNote && confirm('Delete the note?')) {
+                const index = this.notes.indexOf(this.selectedNote)
+                if (index !== -1) {
+                    this.notes.splice(index, 1)
+                }
+            }
+        },
+        favoriteNote() {
+            this.selectedNote.favorite = !this.selectedNote.favorite
         }
     },
     watch: {
@@ -47,3 +82,6 @@ new Vue({
         },
     }
 })
+
+// eslint-disable-next-line no-undef
+Vue.filter('date', time => moment(time).format('DD/MM/YY, HH:mm'))
