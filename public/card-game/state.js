@@ -36,6 +36,9 @@ var state = {
   currentPlayerIndex: Math.round(Math.random()),
   testHand: [],
   activeOverlay: null,
+  drawPile: pile,
+  discardPile: {},
+  canPlay: false,
 
   get currentPlayer() {
     return state.players[state.currentPlayerIndex]
@@ -48,4 +51,10 @@ var state = {
   get currentOpponent() {
     return state.players[this.currentOpponentId]
   },
+
+  get currentHand() {
+    return state.currentPlayer.hand
+  },
+
+
 }

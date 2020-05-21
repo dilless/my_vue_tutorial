@@ -19,8 +19,8 @@ Vue.component('castle-banners', {
             <banner-bar class="food-bar" color="#288339" :ratio="foodRatio"/>
             
             <img src="svg/health-icon.svg" alt="" class="health-icon">
-            <bubble type="health" :value="player.health" :ratio="healthRation"/>
-            <banner-bar class="health-bar" color="#9b2e2e" :ratio="healthRation"/>
+            <bubble type="health" :value="player.health" :ratio="healthRatio"/>
+            <banner-bar class="health-bar" color="#9b2e2e" :ratio="healthRatio"/>
         </div>
     `,
 
@@ -30,7 +30,7 @@ Vue.component('castle-banners', {
         foodRatio() {
             return this.player.food / maxFood
         },
-        healthRation() {
+        healthRatio() {
             return this.player.health / maxHealth
         }
     }
@@ -97,7 +97,7 @@ const cloudAnimationDurations = {
 
 Vue.component('cloud', {
     template: `
-        <div class="cloud" :class="'cloud' + type" :style="style">
+        <div class="cloud" :class="'cloud-' + type" :style="style">
             <img :src="'svg/cloud' + type + '.svg'" alt="" @load="initPosition">
         </div>
     `,
@@ -120,6 +120,31 @@ Vue.component('cloud', {
         initPosition() {
             const width = this.$el.clientWidth
             this.setPosition(-width, 0)
+        },
+        startAnimation(delay = 0) {
+            const vm = this
+            const width = this.$el.clientWidth
+
+            const {min, max} = cloudAnimationDurations
+            const animationDuration = Math.random() * (max - min) + min
+
+            this.style.zIndex = Math.round(max-animationDuration)
+
+            const top = Math.random() * (window.innerHeight * 0.3)
+
+            new TWEEN.Tween({value: -width})
+                .to({value: window.innerWidth}, animationDuration).delay(delay)
+                .onUpdate(function () {
+                    vm.setPosition(this.value, top)
+                })
+                .onComplete(() => {
+                    this.startAnimation(Math.random() * 10000)
+                })
+                .start()
         }
+    },
+
+    mounted() {
+        this.startAnimation(-Math.random() * cloudAnimationDurations.min)
     },
 })
